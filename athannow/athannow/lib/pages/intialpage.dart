@@ -13,31 +13,44 @@ class _InitialPageState extends State<InitialPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(Duration(milliseconds: 500)); // Adding a delay
-      requestLocationPermissionAndLogCoordinates(context);
+      await requestLocationPermissionAndLogCoordinates(context);
     });
   }
 
+  final _textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        Text(
-          'Static Text',
-          style: TextStyle(fontSize: 20),
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                hintText: 'This is the hint text',
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    _textController.clear();
+                  },
+                  icon: const Icon(Icons.clear),
+                ),
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+                print('Submitted text: ${_textController.text}');
+              },
+              color: Colors.blue,
+              child: const Text('Post', style: TextStyle(color: Colors.white)),
+            ),
+          ],
         ),
-        SizedBox(height: 10),
-        TextField(
-          decoration: InputDecoration(
-            hintText: 'Enter text',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          'Some Text',
-          style: TextStyle(fontSize: 16),
-        ),
-      ],
+      ),
     );
   }
 }
