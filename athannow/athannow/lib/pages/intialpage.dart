@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:athannow/commonfunctions/functins.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -44,6 +45,7 @@ class _InitialPageState extends State<InitialPage> {
             MaterialButton(
               onPressed: () {
                 print('Submitted text: ${_textController.text}');
+                testingstoringtext(_textController);
               },
               color: Colors.blue,
               child: const Text('Post', style: TextStyle(color: Colors.white)),
@@ -53,4 +55,12 @@ class _InitialPageState extends State<InitialPage> {
       ),
     );
   }
+}
+
+testingstoringtext(TextEditingController controller) async {
+  final prefs = await SharedPreferences.getInstance();
+
+  await prefs.setString('testtext', controller.text);
+  print("Test text stored succesfuly");
+  print(controller.text);
 }
