@@ -18,8 +18,13 @@ class _InitialPageState extends State<InitialPage> {
     });
   }
 
-  final _textController = TextEditingController();
-
+  final schoolofthoughttext = TextEditingController();
+  final calculationmethodtext = TextEditingController();
+  final shafaqtext = TextEditingController();
+  // only if location is not allowed, or maybe address then
+  final latitudetext = TextEditingController();
+  final longitudetext = TextEditingController();
+  final addresstext = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,37 +38,57 @@ class _InitialPageState extends State<InitialPage> {
               height: 20,
             ),
             const Text(
-              'Static text above the text boxes',
+              'School of thought(required)',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             TextField(
-              controller: _textController,
+              controller: schoolofthoughttext,
               decoration: InputDecoration(
-                hintText: 'This is the hint text',
+                hintText: 'Hanafi, Shafawi,Default Shafawi',
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                   onPressed: () {
-                    _textController.clear();
+                    schoolofthoughttext.clear();
                   },
                   icon: const Icon(Icons.clear),
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
-            Text(
-              'Static text above the text boxes',
+            const Text(
+              'Calculation Method(optional)',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             TextField(
-              controller: _textController,
+              controller: calculationmethodtext,
               decoration: InputDecoration(
-                hintText: 'This is the hint text',
+                hintText: 'See settings page for options',
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                   onPressed: () {
-                    _textController.clear();
+                    calculationmethodtext.clear();
+                  },
+                  icon: const Icon(Icons.clear),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            const Text(
+              'Shafaq(optional)',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            TextField(
+              controller: shafaqtext,
+              decoration: InputDecoration(
+                hintText: 'Options: General, Ahmer, Abyad',
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    shafaqtext.clear();
                   },
                   icon: const Icon(Icons.clear),
                 ),
@@ -71,15 +96,18 @@ class _InitialPageState extends State<InitialPage> {
             ),
             MaterialButton(
               onPressed: () {
-                print('Submitted text: ${_textController.text}');
-                testingstoringtext(_textController);
+                print('Submitted text: ${schoolofthoughttext.text}');
+                testingstoringtext(schoolofthoughttext);
+                // go to athantimings page
               },
-              color: Colors.blue,
-              child: const Text('Post', style: TextStyle(color: Colors.white)),
+              color: Color(0xFF003238),
+              child: const Text('Calculate Timings',
+                  style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
       ),
+      //over here need to add the settings page etc etc.
     );
   }
 }
