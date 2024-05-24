@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('My App'),
+          title: Text('AthanNow'),
         ),
         body: InitialPage(),
       ),

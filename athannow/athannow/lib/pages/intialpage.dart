@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:athannow/commonfunctions/functins.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:athannow/storage/storing.dart';
 
 class InitialPage extends StatefulWidget {
@@ -24,12 +23,39 @@ class _InitialPageState extends State<InitialPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(10.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              'Static text above the text boxes',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                hintText: 'This is the hint text',
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    _textController.clear();
+                  },
+                  icon: const Icon(Icons.clear),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Text(
+              'Static text above the text boxes',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             TextField(
               controller: _textController,
               decoration: InputDecoration(
