@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:athannow/storage/storing.dart';
 
 Future<void> requestLocationPermissionAndLogCoordinates(
     BuildContext context) async {
@@ -14,17 +14,17 @@ Future<void> requestLocationPermissionAndLogCoordinates(
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: const Text('Location Permission'),
-          content: const Text('My App wants to access your location.'),
+          content: const Text('AthanNow wants to access your location.'),
           actions: [
             CupertinoDialogAction(
-              child: Text('Deny'),
+              child: const Text('Deny'),
               onPressed: () {
                 print('Deny pressed');
                 Navigator.of(context, rootNavigator: true).pop();
               },
             ),
             CupertinoDialogAction(
-              child: Text('Allow'),
+              child: const Text('Allow'),
               onPressed: () async {
                 print('Allow pressed');
                 Navigator.of(context, rootNavigator: true).pop();
@@ -37,7 +37,7 @@ Future<void> requestLocationPermissionAndLogCoordinates(
     );
   } else {
     print("Location already stored");
-    //   removeLocationData();
+    //  removeLocationData();
   }
 }
 
@@ -58,7 +58,6 @@ Future<void> getLocationPermission() async {
   loc.Location location = loc.Location();
   bool serviceEnabled;
   loc.PermissionStatus permissionStatus;
-
   serviceEnabled = await location.serviceEnabled();
   if (!serviceEnabled) {
     print('Location service not enabled, requesting enablement');
@@ -68,7 +67,6 @@ Future<void> getLocationPermission() async {
       return;
     }
   }
-
   permissionStatus = await location.hasPermission();
   if (permissionStatus == loc.PermissionStatus.denied) {
     print('Location permission denied, requesting permission');
@@ -94,6 +92,7 @@ Future<void> getUserLocation() async {
     // Log the latitude and longitude values
     print('Latitude: $latitude');
     print('Longitude: $longitude');
+    // store latitude and longitude
     await storeLocationData(latitude, longitude);
   } catch (e) {
     print('Error getting location: $e');
@@ -101,31 +100,24 @@ Future<void> getUserLocation() async {
 }
 
 Future<void> storeLocationData(double latitude, double longitude) async {
-  final userPreference = await SharedPreferences.getInstance();
-
-  await userPreference.setDouble('latitude', latitude);
-  await userPreference.setDouble('longitude', longitude);
+  store("double", "latitude", latitude.toString());
+  store("double", "longitude", longitude.toString());
   print("Memory stored correctly");
 }
 
 Future<bool> isDataAlreadyHere() async {
-  final userPreference = await SharedPreferences.getInstance();
-
-  final double? latitude2 = userPreference.getDouble('latitude');
-  final double? longitude2 = userPreference.getDouble('longitude');
-  print('Latitude memory check: $latitude2');
-  print('Longitude memory check: $longitude2');
-
-  if (latitude2 == null || longitude2 == null) {
+  double? latitude = await get("double", "latitude");
+  double? longitude = await get("double", "longitude");
+  print('Latitude memory check: $latitude');
+  print('Longitude memory check: $longitude');
+  if (latitude == null || longitude == null) {
     return false;
   }
   return true;
 }
 
-// removing location data
 Future<void> removeLocationData() async {
-  final userPreference = await SharedPreferences.getInstance();
-  await userPreference.remove('latitude');
-  await userPreference.remove('longitude');
+  remove("longitude");
+  remove("latitude");
   print("Memory removed correctly");
 }

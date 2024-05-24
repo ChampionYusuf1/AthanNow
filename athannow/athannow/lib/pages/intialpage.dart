@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:athannow/commonfunctions/functins.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:athannow/storage/storing.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -58,9 +59,11 @@ class _InitialPageState extends State<InitialPage> {
 }
 
 testingstoringtext(TextEditingController controller) async {
-  final prefs = await SharedPreferences.getInstance();
+  // final prefs = await SharedPreferences.getInstance();
 
-  await prefs.setString('testtext', controller.text);
+  // await prefs.setString('testtext', controller.text);
+  store("string", "testtext", controller.text);
   print("Test text stored succesfuly");
-  print(controller.text);
+  String temp = await get("string", "testtext");
+  print(temp);
 }
