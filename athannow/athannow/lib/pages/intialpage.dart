@@ -111,6 +111,9 @@ class _InitialPageState extends State<InitialPage> {
     );
   }
 }
+// need to make a dropdown menu in the widget, and have the default values selected from the API that way
+// the api will always work no matter what tehy change, the only thing that really matters
+// is getting from city, address or latitude which will take some login
 
 testingstoringtext(TextEditingController controller) async {
   // final prefs = await SharedPreferences.getInstance();
