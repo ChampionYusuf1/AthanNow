@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:athannow/storage/storing.dart';
 
+// this widget is the intial location permission widget
 Future<void> requestLocationPermissionAndLogCoordinates(
     BuildContext context) async {
   bool location = await isDataAlreadyHere();
@@ -41,6 +43,7 @@ Future<void> requestLocationPermissionAndLogCoordinates(
   }
 }
 
+// just future logs for handling location permission
 Future<void> handleLocationPermission(BuildContext context) async {
   print('Handling location permission');
   try {
@@ -53,6 +56,7 @@ Future<void> handleLocationPermission(BuildContext context) async {
   }
 }
 
+// permission for getlocationpermission
 Future<void> getLocationPermission() async {
   print('Requesting location permission');
   loc.Location location = loc.Location();
@@ -79,6 +83,7 @@ Future<void> getLocationPermission() async {
   print('Location permission granted');
 }
 
+// getting user location
 Future<void> getUserLocation() async {
   print('Requesting user location');
   try {
@@ -99,12 +104,14 @@ Future<void> getUserLocation() async {
   }
 }
 
+// storing location data
 Future<void> storeLocationData(double latitude, double longitude) async {
   store("double", "latitude", latitude.toString());
   store("double", "longitude", longitude.toString());
   print("Memory stored correctly");
 }
 
+// checking if data is alreadyhere to see for permissions are needed
 Future<bool> isDataAlreadyHere() async {
   double? latitude = await get("double", "latitude");
   double? longitude = await get("double", "longitude");
@@ -116,8 +123,18 @@ Future<bool> isDataAlreadyHere() async {
   return true;
 }
 
-Future<void> removeLocationData() async {
-  remove("longitude");
-  remove("latitude");
-  print("Memory removed correctly");
+bool testingwidget(bool test) {
+  Widget myWidget = Container(
+    color: Colors.blue,
+    child: Text(
+      'Testing Widget',
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+      ),
+    ),
+  );
+  print('Testing widget created');
+  return true;
+  // Use myWidget in your UI
 }

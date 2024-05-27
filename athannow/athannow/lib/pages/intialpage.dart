@@ -1,30 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:athannow/commonfunctions/functins.dart';
 import 'package:athannow/storage/storing.dart';
 
 class InitialPage extends StatefulWidget {
+  const InitialPage({super.key});
+
   @override
   _InitialPageState createState() => _InitialPageState();
 }
 
 class _InitialPageState extends State<InitialPage> {
+  String? selectedSchoolOfThought;
+  String? selectedCalculationMethod;
+  String? selectedShafaq;
+
+  final List<String> schoolOfThoughtOptions = [
+    'Hanafi',
+    'Shafawi',
+  ];
+  final List<String> selectedCalculationMethodOptions = [
+    'University of Islamic Sciences, Karachi', //1
+    'Islamic Society of North America', //2
+    'Muslim World League', //3
+    'Umm Al-Qura University, Makkah', //4
+    'Egyptian General Authority of Survey', //5
+    'Institute of Geophysics, University of Tehran', //7
+    'Gulf Region', //8
+    'Kuwait', //9
+    'Qatar', //10
+    'Majlis Ugama Islam Singapura, Singapore', //11
+    'Union Organization islamic de France', //12
+    'Diyanet İşleri Başkanlgl, Turkey', //13
+    'Spiritual Administration of Muslims of Russia', //14
+    'Moonsighting Committee Worldwide', //15 need shafaq
+    'Dubai (unofficial)', //16
+    'Shia Ithna-Ashari' //0
+  ];
+  final List<String> shafaqOptions = [
+    'General',
+    'Ahmer',
+    'Abyad',
+  ];
+
+  final citytext = TextEditingController();
+  final countrytext = TextEditingController();
+
+  Future<bool> fetchData() async {
+    double? test = await get("double", "latitudee");
+    return test != null;
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.delayed(Duration(milliseconds: 500)); // Adding a delay
+      await Future.delayed(const Duration(milliseconds: 500)); // Adding a delay
       await requestLocationPermissionAndLogCoordinates(context);
     });
   }
 
-  final schoolofthoughttext = TextEditingController();
-  final calculationmethodtext = TextEditingController();
-  final shafaqtext = TextEditingController();
-  // only if location is not allowed, or maybe address then
-  final latitudetext = TextEditingController();
-  final longitudetext = TextEditingController();
-  final addresstext = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,69 +72,167 @@ class _InitialPageState extends State<InitialPage> {
               height: 20,
             ),
             const Text(
-              'School of thought(required)',
+              'School of thought (required)',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            TextField(
-              controller: schoolofthoughttext,
-              decoration: InputDecoration(
-                hintText: 'Hanafi, Shafawi,Default Shafawi',
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    schoolofthoughttext.clear();
-                  },
-                  icon: const Icon(Icons.clear),
-                ),
+            // DROPDOWN
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: DropdownButton<String>(
+                isExpanded: true,
+                hint: const Text('Select School of Thought'),
+                value: selectedSchoolOfThought,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedSchoolOfThought = newValue!;
+                  });
+                },
+                items: schoolOfThoughtOptions.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
               ),
             ),
             const SizedBox(
               height: 15,
             ),
             const Text(
-              'Calculation Method(optional)',
+              'Calculation Method (optional)',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            TextField(
-              controller: calculationmethodtext,
-              decoration: InputDecoration(
-                hintText: 'See settings page for options',
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    calculationmethodtext.clear();
-                  },
-                  icon: const Icon(Icons.clear),
-                ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: DropdownButton<String>(
+                isExpanded: true,
+                hint: const Text('Select Calculation Method'),
+                value: selectedCalculationMethod,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedCalculationMethod = newValue!;
+                  });
+                },
+                items: selectedCalculationMethodOptions.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
               ),
             ),
             const SizedBox(
               height: 15,
             ),
             const Text(
-              'Shafaq(optional)',
+              'Shafaq (optional)',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            TextField(
-              controller: shafaqtext,
-              decoration: InputDecoration(
-                hintText: 'Options: General, Ahmer, Abyad',
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    shafaqtext.clear();
-                  },
-                  icon: const Icon(Icons.clear),
-                ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(5),
               ),
+              child: DropdownButton<String>(
+                isExpanded: true,
+                hint: const Text('Select Shafaq'),
+                value: selectedShafaq,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedShafaq = newValue!;
+                  });
+                },
+                items: shafaqOptions.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            FutureBuilder<bool>(
+              future: fetchData(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator(); // Show loading indicator while waiting for the future
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.hasData && !snapshot.data!) {
+                  // If location is not stored, show additional text fields
+                  return Column(
+                    children: [
+                      const Text(
+                        'Please Enter the City you live in.',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      TextField(
+                        controller: citytext,
+                        decoration: InputDecoration(
+                          hintText: 'Ex: Chicago',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              citytext.clear();
+                            },
+                            icon: const Icon(Icons.clear),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      const Text(
+                        'Please enter the country you live in',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      TextField(
+                        controller: countrytext,
+                        decoration: InputDecoration(
+                          hintText: 'Ex: United States',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              countrytext.clear();
+                            },
+                            icon: const Icon(Icons.clear),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                    ],
+                  );
+                } else {
+                  return Container(); // Return an empty container if location is stored
+                }
+              },
             ),
             MaterialButton(
               onPressed: () {
-                print('Submitted text: ${schoolofthoughttext.text}');
-                testingstoringtext(schoolofthoughttext);
+                store("string", "SchoolOfThought", selectedSchoolOfThought!);
+                store(
+                    "string", "CalculationMethod", selectedCalculationMethod!);
+                store("string", "Shafaq", selectedShafaq!);
+                store("string", "City", citytext.text);
+                store("string", "country", countrytext.text);
                 // go to athantimings page
               },
-              color: Color(0xFF003238),
+              color: const Color(0xFF003238),
               child: const Text('Calculate Timings',
                   style: TextStyle(color: Colors.white)),
             ),
@@ -110,17 +242,4 @@ class _InitialPageState extends State<InitialPage> {
       //over here need to add the settings page etc etc.
     );
   }
-}
-// need to make a dropdown menu in the widget, and have the default values selected from the API that way
-// the api will always work no matter what tehy change, the only thing that really matters
-// is getting from city, address or latitude which will take some login
-
-testingstoringtext(TextEditingController controller) async {
-  // final prefs = await SharedPreferences.getInstance();
-
-  // await prefs.setString('testtext', controller.text);
-  store("string", "testtext", controller.text);
-  print("Test text stored succesfuly");
-  String temp = await get("string", "testtext");
-  print(temp);
 }

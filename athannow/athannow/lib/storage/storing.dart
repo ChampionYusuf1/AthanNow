@@ -1,51 +1,24 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 // a few things we want to do here
-/**
- * Firstly, store all neccesary information for prayer timings
- * and we want to make all of these actually into either one function or seperate
- * 
- * latitude OR address OR city
- * longitude OR address OR city
- * 
- * month
- * year
- * method
- * shafaq
- * tune
- * midnight mode
- * timezone string
- * latitude adjustment method
- * adjustment
- * iso8601
- */
-
-/*  store data
-Future<void> storeLocationData(double latitude, double longitude) async {
-  final userPreference = await SharedPreferences.getInstance();
-
-  await userPreference.setDouble('latitude', latitude);
-  await userPreference.setDouble('longitude', longitude);
-  print("Memory stored correctly");
-}
-removing data
-Future<void> removeLocationData() async {
-  final userPreference = await SharedPreferences.getInstance();
-  await userPreference.remove('latitude');
-  await userPreference.remove('longitude');
-  print("Memory removed correctly");
-}
-reading data
-Future<void> ReadLocationData() async {
-  final userPreference = await SharedPreferences.getInstance();
-  final String? latitude = await userPreferece.get('latitude');
-  final String? longitude = await userPreferece.get('longitude');
-  print("Memory read");
-}
- */
+/// Firstly, store all neccesary information for prayer timings
+/// and we want to make all of these actually into either one function or seperate
+///
+/// latitude OR address OR city
+/// longitude OR address OR city
+///
+/// month
+/// year
+/// method
+/// shafaq
+/// tune
+/// midnight mode
+/// timezone string
+/// latitude adjustment method
+/// adjustment
+/// iso8601
 
 //dynamic method to store a variable
-
 void store(String variable, String name, String value) async {
   final prefs = await SharedPreferences.getInstance();
 
@@ -201,7 +174,7 @@ void removemonth(int month) async {
 
 //adjustment
 
-//adjustment 
+//adjustment
 
 //is08601
 
