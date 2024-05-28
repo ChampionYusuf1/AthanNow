@@ -4,7 +4,7 @@ import 'package:athannow/pages/intialpage.dart';
 void main() {
   runApp(MyApp());
 }
-
+// update dev
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
