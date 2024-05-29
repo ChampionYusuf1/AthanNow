@@ -1,3 +1,4 @@
+import 'package:athannow/pages/athantimings.dart';
 import 'package:flutter/material.dart';
 import 'package:athannow/commonfunctions/functins.dart';
 import 'package:athannow/storage/storing.dart';
@@ -223,13 +224,28 @@ class _InitialPageState extends State<InitialPage> {
               },
             ),
             MaterialButton(
-              onPressed: () {
-                store("string", "SchoolOfThought", selectedSchoolOfThought!);
-                store(
-                    "string", "CalculationMethod", selectedCalculationMethod!);
-                store("string", "Shafaq", selectedShafaq!);
-                store("string", "City", citytext.text);
-                store("string", "country", countrytext.text);
+              onPressed: () async {
+                if (selectedSchoolOfThought != null) {
+                  store("string", "SchoolOfThought", selectedSchoolOfThought!);
+                }
+                if (selectedCalculationMethod != null) {
+                  store("string", "CalculationMethod",
+                      selectedCalculationMethod!);
+                }
+                if (selectedShafaq != null) {
+                  store("string", "Shafaq", selectedShafaq!);
+                }
+
+                if (await fetchData()) {
+                  store("string", "City", citytext.text);
+                  store("string", "country", countrytext.text);
+                }
+                // NEED TO FIGURE OUT HOW TO MAKE THIS NULL
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AthanTimingsPage()),
+                );
                 // go to athantimings page
               },
               color: const Color(0xFF003238),
