@@ -47,7 +47,7 @@ class _InitialPageState extends State<InitialPage> {
   final countrytext = TextEditingController();
 
   Future<bool> fetchData() async {
-    double? test = await get("double", "latitudee");
+    double? test = await get("double", "latitude");
     return test != null;
   }
 
@@ -237,7 +237,7 @@ class _InitialPageState extends State<InitialPage> {
                 }
 
                 if (await fetchData()) {
-                  store("string", "City", citytext.text);
+                  store("string", "city", citytext.text);
                   store("string", "country", countrytext.text);
                 }
                 // NEED TO FIGURE OUT HOW TO MAKE THIS NULL

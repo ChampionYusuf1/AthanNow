@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:athannow/storage/storing.dart';
+import 'package:intl/intl.dart';
 
 // this widget is the intial location permission widget
 Future<void> requestLocationPermissionAndLogCoordinates(
@@ -138,3 +139,29 @@ bool testingwidget(bool test) {
   return true;
   // Use myWidget in your UI
 }
+//https://aladhan.com/prayer-times-api#GetCalendar
+
+// athan timings api with latitude and longitude
+//https://api.aladhan.com/v1/calendar/2017/4?latitude=51.508515&longitude=-0.1254872&method=2&shafaq=general&school=0
+// http://api.aladhan.com/v1/timings/17-07-2007?latitude=51.508515&longitude=-0.1254872&method=2
+void calculateprayertimings() async {
+  double? latitude = await get("double", "latitude");
+  double? longitude = await get("double", "longitude");
+  // need to change calculation method to 0-1,2,3, etc
+  String calculationmethod = await get("string", "CalculationMethod");
+  // need to lowercase shafaq
+  String? shafaq = await get("string", "Shafaq");
+  String? city = await get("string", "city");
+  String? country = await get("string", "country");
+  // need to change school of thought to 0 1
+  String? SchoolOfThought = await get("string", "SchoolOfThought");
+  var now = DateTime.now();
+  var formatter = DateFormat('dd-MM-yyyy');
+  String formattedDate = formatter.format(now);
+  print(formattedDate); // 2016-01-25
+  String? http = "http://api.aladhan.com/v1/timings/";
+  String apiUrl =
+      "$http$formattedDate?latitude=$latitude&longitude=$longitude&method=$calculationmethod&shafaq=$shafaq&school=$SchoolOfThought";
+  print(apiUrl);
+}
+//athan timings with city and country
