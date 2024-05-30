@@ -139,6 +139,7 @@ bool testingwidget(bool test) {
   return true;
   // Use myWidget in your UI
 }
+
 //https://aladhan.com/prayer-times-api#GetCalendar
 
 // athan timings api with latitude and longitude
@@ -148,20 +149,92 @@ void calculateprayertimings() async {
   double? latitude = await get("double", "latitude");
   double? longitude = await get("double", "longitude");
   // need to change calculation method to 0-1,2,3, etc
-  String calculationmethod = await get("string", "CalculationMethod");
-  // need to lowercase shafaq
+  String? calculationmethod = await get("string", "CalculationMethod");
+  String? convertedcalculationmethod = convertcalculation(calculationmethod);
+  // converted shafaq
   String? shafaq = await get("string", "Shafaq");
+  String? convertedshafaq = convertshafaq(shafaq);
+
+  // getting city and state
   String? city = await get("string", "city");
   String? country = await get("string", "country");
-  // need to change school of thought to 0 1
+  // school of thought
   String? SchoolOfThought = await get("string", "SchoolOfThought");
+  String? convertedschool = convertschool(SchoolOfThought);
+
+  // getting new date
   var now = DateTime.now();
   var formatter = DateFormat('dd-MM-yyyy');
   String formattedDate = formatter.format(now);
-  print(formattedDate); // 2016-01-25
+  print(formattedDate);
+
+// basic api url
   String? http = "http://api.aladhan.com/v1/timings/";
+
+// need to check if the no calculation method is found, then dont include it,
   String apiUrl =
-      "$http$formattedDate?latitude=$latitude&longitude=$longitude&method=$calculationmethod&shafaq=$shafaq&school=$SchoolOfThought";
+      "$http$formattedDate?latitude=$latitude&longitude=$longitude&method=$convertedcalculationmethod&shafaq=$convertedshafaq&school=$convertedschool";
   print(apiUrl);
+}
+
+String? convertcalculation(String? calc) {
+  if (calc == "Shia Ithna-Ashari") {
+    return "0";
+  } else if (calc == "University of Islamic Sciences, Karachi") {
+    return "1";
+  } else if (calc == "Islamic Society of North America") {
+    return "2";
+  } else if (calc == "Muslim World League") {
+    return "3";
+  } else if (calc == "Umm Al-Qura University, Makkah") {
+    return "4";
+  } else if (calc == "Egyptian General Authority of Survey") {
+    return "5";
+  } else if (calc == "Institute of Geophysics, University of Tehran") {
+    return "7";
+  } else if (calc == "Gulf Region") {
+    return "8";
+  } else if (calc == "Kuwait") {
+    return "9";
+  } else if (calc == "Qatar") {
+    return "10";
+  } else if (calc == "Majlis Ugama Islam Singapura, Singapore") {
+    return "11";
+  } else if (calc == "Union Organization islamic de France") {
+    return "12";
+  } else if (calc == "Diyanet İşleri Başkanlgl, Turkey") {
+    return "13";
+  } else if (calc == "Spiritual Administration of Muslims of Russia") {
+    return "14";
+  } else if (calc ==
+      "Moonsighting Committee Worldwide (also requires shafaq parameter)") {
+    return "15";
+  } else if (calc == "Dubai (unofficial)") {
+    return "16";
+  } else {
+    return null;
+  }
+}
+
+String? convertshafaq(String? shafaq) {
+  if (shafaq == "Ahmer") {
+    return "ahmer";
+  } else if (shafaq == "General") {
+    return "general";
+  } else if (shafaq == "Abyad") {
+    return "abyad";
+  } else {
+    return "general";
+  }
+}
+
+String? convertschool(String? school) {
+  if (school == "Hanafi") {
+    return "1";
+  } else if (school == "Shafawi") {
+    return "0";
+  } else {
+    return "0";
+  }
 }
 //athan timings with city and country
