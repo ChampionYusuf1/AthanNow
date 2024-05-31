@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:athannow/storage/storing.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 // this widget is the intial location permission widget
 Future<void> requestLocationPermissionAndLogCoordinates(
@@ -166,15 +170,32 @@ void calculateprayertimings() async {
   var now = DateTime.now();
   var formatter = DateFormat('dd-MM-yyyy');
   String formattedDate = formatter.format(now);
-  print(formattedDate);
 
 // basic api url
-  String? http = "http://api.aladhan.com/v1/timings/";
+  String? http = "http://api.aladhan.com/v1/timings/$formattedDate?";
 
 // need to check if the no calculation method is found, then dont include it,
-  String apiUrl =
-      "$http$formattedDate?latitude=$latitude&longitude=$longitude&method=$convertedcalculationmethod&shafaq=$convertedshafaq&school=$convertedschool";
-  print(apiUrl);
+  if (latitude != null && longitude != null) {
+    http = "${http}latitude=$latitude&longitude=$longitude";
+  } else if (city != null && country != null) {
+    http = "${http}city=$city&state=$country";
+  } else {
+    print(
+        "no longitude lattiude city or state found cannot finish calculations these are requireds");
+  }
+  if (calculationmethod != null) {
+    http = "$http&method=$convertedcalculationmethod";
+  }
+  if (shafaq != null) {
+    http = "$http&shafaq=$convertedshafaq";
+  }
+  if (SchoolOfThought != null) {
+    http = "$http&school=$convertedschool";
+  }
+  store("string", "apiurl", http);
+  // String apiUrl ="$http$formattedDate?latitude=$latitude&longitude=$longitude&method=$convertedcalculationmethod&shafaq=$convertedshafaq&school=$convertedschool";
+  // print(apiUrl);
+  print(http);
 }
 
 String? convertcalculation(String? calc) {
@@ -237,4 +258,57 @@ String? convertschool(String? school) {
     return "0";
   }
 }
+
+class NamazTimings {
+  final String? fajr;
+  final String? dhuhr;
+  final String? asr;
+  final String? maghrib;
+  final String? isha;
+
+  NamazTimings({
+    required this.fajr,
+    required this.dhuhr,
+    required this.asr,
+    required this.maghrib,
+    required this.isha,
+  });
+
+  factory NamazTimings.fromJson(Map<String, dynamic> json) {
+    return NamazTimings(
+      fajr: json['Fajr'],
+      dhuhr: json['Dhuhr'],
+      asr: json['Asr'],
+      maghrib: json['Maghrib'],
+      isha: json['Isha'],
+    );
+  }
+}
+
+Future<NamazTimings> fetchNamazTimings() async {
+  calculateprayertimings();
+  String? apiurl = await get("string", "apiurl");
+
+  if (apiurl == null) {
+    throw Exception('API URL is null');
+  }
+
+  print("apiurl: $apiurl");
+  final response = await http.get(Uri.parse(apiurl));
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+    if (jsonResponse['data'] == null ||
+        jsonResponse['data']['timings'] == null) {
+      throw Exception('Invalid JSON structure');
+    }
+
+    return NamazTimings.fromJson(jsonResponse['data']['timings']);
+  } else {
+    throw Exception('Failed to load Namaz timings');
+  }
+}
+
+
 //athan timings with city and country
