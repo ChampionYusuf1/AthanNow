@@ -20,6 +20,7 @@ class _InitialPageState extends State<InitialPage> {
     'Shafawi',
   ];
   final List<String> selectedCalculationMethodOptions = [
+    'Closest to your location',
     'University of Islamic Sciences, Karachi', //1
     'Islamic Society of North America', //2
     'Muslim World League', //3
@@ -236,9 +237,13 @@ class _InitialPageState extends State<InitialPage> {
                   store("string", "Shafaq", selectedShafaq!);
                 }
 
-                if (await fetchData()) {
+                if (!await fetchData()) {
                   store("string", "city", citytext.text);
                   store("string", "country", countrytext.text);
+                  store("string", "SchoolOfThought", selectedSchoolOfThought!);
+                  store("string", "CalculationMethod",
+                      selectedCalculationMethod!);
+                  store("string", "Shafaq", selectedShafaq!);
                 }
                 // NEED TO FIGURE OUT HOW TO MAKE THIS NULL
 

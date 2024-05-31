@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -149,7 +150,9 @@ bool testingwidget(bool test) {
 // athan timings api with latitude and longitude
 //https://api.aladhan.com/v1/calendar/2017/4?latitude=51.508515&longitude=-0.1254872&method=2&shafaq=general&school=0
 // http://api.aladhan.com/v1/timings/17-07-2007?latitude=51.508515&longitude=-0.1254872&method=2
-void calculateprayertimings() async {
+Future<void> calculateprayertimings() async {
+  remove("apiurl");
+
   double? latitude = await get("double", "latitude");
   double? longitude = await get("double", "longitude");
   // need to change calculation method to 0-1,2,3, etc
@@ -172,30 +175,26 @@ void calculateprayertimings() async {
   String formattedDate = formatter.format(now);
 
 // basic api url
-  String? http = "http://api.aladhan.com/v1/timings/$formattedDate?";
+  // String? url = "http://api.aladhan.com/v1/timings/$formattedDate?";
+  String? url = "http://api.aladhan.com/v1/timings";
 
-// need to check if the no calculation method is found, then dont include it,
   if (latitude != null && longitude != null) {
-    http = "${http}latitude=$latitude&longitude=$longitude";
-  } else if (city != null && country != null) {
-    http = "${http}city=$city&state=$country";
+    url = "$url/$formattedDate?latitude=$latitude&longitude=$longitude";
   } else {
-    print(
-        "no longitude lattiude city or state found cannot finish calculations these are requireds");
+    url = "${url}ByCity/$formattedDate?city=$city&country=$country";
   }
+
   if (calculationmethod != null) {
-    http = "$http&method=$convertedcalculationmethod";
+    url = "$url&method=$convertedcalculationmethod";
   }
   if (shafaq != null) {
-    http = "$http&shafaq=$convertedshafaq";
+    url = "$url&shafaq=$convertedshafaq";
   }
   if (SchoolOfThought != null) {
-    http = "$http&school=$convertedschool";
+    url = "$url&school=$convertedschool";
   }
-  store("string", "apiurl", http);
-  // String apiUrl ="$http$formattedDate?latitude=$latitude&longitude=$longitude&method=$convertedcalculationmethod&shafaq=$convertedshafaq&school=$convertedschool";
-  // print(apiUrl);
-  print(http);
+  store("string", "apiurl", url);
+  print(url);
 }
 
 String? convertcalculation(String? calc) {
@@ -286,10 +285,12 @@ class NamazTimings {
 }
 
 Future<NamazTimings> fetchNamazTimings() async {
-  calculateprayertimings();
+  await calculateprayertimings();
+
   String? apiurl = await get("string", "apiurl");
 
   if (apiurl == null) {
+    print("api null error$apiurl");
     throw Exception('API URL is null');
   }
 
