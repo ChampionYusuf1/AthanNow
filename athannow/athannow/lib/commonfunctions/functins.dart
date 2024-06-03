@@ -252,6 +252,19 @@ String? convertschool(String? school) {
   }
 }
 
+class Qibladirection {
+  final double? direction;
+
+  Qibladirection({
+    required this.direction,
+  });
+  factory Qibladirection.fromJson(Map<String, dynamic> json) {
+    return Qibladirection(
+      direction: (json['data']['direction'] as num).toDouble(),
+    );
+  }
+}
+
 class Hadiths {
   final String? hadithNumber;
   final String? englishNarrator;
@@ -429,4 +442,26 @@ Future<double?> getCompassHeading() async {
   // Wait for the initial heading value to be set
   await Future.delayed(const Duration(seconds: 1));
   return heading;
+}
+
+Future<Qibladirection> fetchQiblaDirection() async {
+  double? latitude = await get("double", "latitude");
+  double? longitude = await get("double", "longitude");
+
+  if (latitude == null || longitude == null) {
+    throw Exception('Latitude and Longitude are not available');
+  }
+
+  final response = await http
+      .get(Uri.parse('http://api.aladhan.com/v1/qibla/$latitude/$longitude'));
+
+  if (response.statusCode == 200) {
+    final jsonResponse = jsonDecode(response.body);
+    if (jsonResponse['data']['direction'] == null) {
+      throw Exception('Invalid JSON structure');
+    }
+    return Qibladirection.fromJson(jsonResponse);
+  } else {
+    throw Exception('Failed to fetch Qibla direction');
+  }
 }

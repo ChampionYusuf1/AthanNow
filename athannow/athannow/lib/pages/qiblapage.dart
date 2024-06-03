@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:athannow/commonfunctions/functins.dart'; // Ensure this function is in the correct path
 
 class Qiblapage extends StatefulWidget {
   @override
@@ -9,10 +10,12 @@ class Qiblapage extends StatefulWidget {
 class _QiblapageState extends State<Qiblapage> {
   double? _heading;
   Color example = Colors.black;
+  int? qibladirection;
 
   @override
   void initState() {
     super.initState();
+    _fetchQiblaDirection();
     _startCompass();
   }
 
@@ -21,13 +24,33 @@ class _QiblapageState extends State<Qiblapage> {
       setState(() {
         _heading = event.heading;
         int? test = _heading?.toInt();
-        if (test != null && test != 1) {
-          example = Colors.green;
+        print(qibladirection);
+        if (test != null && qibladirection != null) {
+          if (test == qibladirection ||
+              test == qibladirection! + 1 ||
+              test == qibladirection! - 1 ||
+              test == qibladirection! + 2 ||
+              test == qibladirection! - 2) {
+            example = Colors.green;
+          } else {
+            example = Colors.black;
+          }
         } else {
-          example = Colors.black; // Set to a different color for test == 1
+          example = Colors.black;
         }
       });
     });
+  }
+
+  void _fetchQiblaDirection() async {
+    try {
+      Qibladirection qiblaDirection = await fetchQiblaDirection();
+      setState(() {
+        qibladirection = qiblaDirection.direction?.toInt();
+      });
+    } catch (e) {
+      print('Error fetching Qibla direction: $e');
+    }
   }
 
   @override
