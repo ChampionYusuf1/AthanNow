@@ -341,9 +341,11 @@ Future<bool> checkapiurl() async {
 //  https://www.hadithapi.com/public/api/hadiths?apiKey=$2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS
 
 Future<int> fetchTotalHadithsPages() async {
+  int randomVariable = Random().nextInt(1000) + 1;
   final response = await http.get(
     Uri.parse(
-        r'https://hadithapi.com/public/api/hadiths?apiKey=$2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS&paginate=1'),
+        r'https://hadithapi.com/public/api/hadiths?apiKey=$2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS&paginate=' +
+            randomVariable.toString()),
   );
 
   if (response.statusCode == 200) {
