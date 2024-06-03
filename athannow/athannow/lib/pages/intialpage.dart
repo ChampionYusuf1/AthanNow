@@ -63,6 +63,7 @@ class _InitialPageState extends State<InitialPage> {
   }
 
 // NEED TO ADD SETTINGS PAGE IS LATITUDE LONGITUDE IS ENABLES BUT WANT TO USE A CERTAIN CITY OR ADDRESS
+// update location
   @override
   Widget build(BuildContext context) {
     return Scaffold(

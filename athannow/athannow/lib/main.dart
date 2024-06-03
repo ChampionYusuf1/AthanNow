@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // removealldata();
     return MaterialApp(
       title: 'Athan Now',
       home: FutureBuilder<bool>(

@@ -21,35 +21,42 @@ class _QiblapageState extends State<Qiblapage> {
 
   void _startCompass() {
     FlutterCompass.events!.listen((event) {
-      setState(() {
-        _heading = event.heading;
-        int? test = _heading?.toInt();
-        print(qibladirection);
-        if (test != null && qibladirection != null) {
-          if (test == qibladirection ||
-              test == qibladirection! + 1 ||
-              test == qibladirection! - 1 ||
-              test == qibladirection! + 2 ||
-              test == qibladirection! - 2) {
-            example = Colors.green;
+      if (mounted) {
+        setState(() {
+          _heading = event.heading;
+          int? test = _heading?.toInt();
+          if (test != null && qibladirection != null) {
+            if (test == qibladirection ||
+                test == qibladirection! + 1 ||
+                test == qibladirection! - 1 ||
+                test == qibladirection! + 2 ||
+                test == qibladirection! - 2) {
+              example = Colors.green;
+            } else {
+              example = Colors.black;
+            }
           } else {
             example = Colors.black;
           }
-        } else {
-          example = Colors.black;
-        }
-      });
+        });
+      }
     });
   }
 
   void _fetchQiblaDirection() async {
     try {
       Qibladirection qiblaDirection = await fetchQiblaDirection();
-      setState(() {
-        qibladirection = qiblaDirection.direction?.toInt();
-      });
+      if (mounted) {
+        setState(() {
+          qibladirection = qiblaDirection.direction?.toInt();
+        });
+      }
     } catch (e) {
-      print('Error fetching Qibla direction: $e');
+      if (mounted) {
+        setState(() {
+          print('Error fetching Qibla direction: $e');
+        });
+      }
     }
   }
 

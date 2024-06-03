@@ -355,33 +355,13 @@ Future<bool> checkapiurl() async {
 // hadith of the day $2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS
 //  https://www.hadithapi.com/public/api/hadiths?apiKey=$2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS
 
-Future<int> fetchTotalHadithsPages() async {
-  int randomVariable = Random().nextInt(1000) + 1;
-  final response = await http.get(
-    Uri.parse(
-        r'https://hadithapi.com/public/api/hadiths?apiKey=$2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS&paginate=' +
-            randomVariable.toString()),
-  );
-
-  if (response.statusCode == 200) {
-    final jsonResponse = jsonDecode(response.body);
-    if (jsonResponse['hadiths'] == null) {
-      throw Exception('Invalid JSON structure');
-    }
-    return jsonResponse['hadiths']['last_page'];
-  } else {
-    throw Exception('Failed to fetch total pages');
-  }
-}
-
 Future<Hadiths> fetchHadith() async {
   Random random = Random();
-  int totalPages = await fetchTotalHadithsPages();
-  int randomPage = random.nextInt(totalPages) + 1;
+  int randomPage = random.nextInt(1000) + 1;
 
   final response = await http.get(
     Uri.parse(
-        r'https://hadithapi.com/public/api/hadiths?apiKey=$2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS&page=$randomPage'),
+        'https://hadithapi.com/public/api/hadiths?apiKey=\$2y\$10\$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS&page=$randomPage'),
   );
 
   if (response.statusCode == 200) {
@@ -395,9 +375,9 @@ Future<Hadiths> fetchHadith() async {
       throw Exception('No hadiths found');
     }
 
+    // Select a random hadith from the list
     int randomHadithIndex = random.nextInt(hadithsList.length);
-    final randomHadithJson = hadithsList[randomHadithIndex];
-    return Hadiths.fromJson(randomHadithJson);
+    return Hadiths.fromJson(hadithsList[randomHadithIndex]);
   } else {
     throw Exception('Failed to load Hadith');
   }
@@ -464,4 +444,15 @@ Future<Qibladirection> fetchQiblaDirection() async {
   } else {
     throw Exception('Failed to fetch Qibla direction');
   }
+}
+
+void removealldata() async {
+  remove("latitude");
+  remove("longitude");
+  remove("SchoolOfThought");
+  remove("CalculationMethod");
+  remove("apiurl");
+  remove("Shafaq");
+  remove("city");
+  remove("country");
 }
