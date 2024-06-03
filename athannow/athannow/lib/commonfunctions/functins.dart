@@ -155,42 +155,33 @@ Future<void> calculateprayertimings() async {
 
   double? latitude = await get("double", "latitude");
   double? longitude = await get("double", "longitude");
-  // need to change calculation method to 0-1,2,3, etc
   String? calculationmethod = await get("string", "CalculationMethod");
   String? convertedcalculationmethod = convertcalculation(calculationmethod);
-  // converted shafaq
   String? shafaq = await get("string", "Shafaq");
   String? convertedshafaq = convertshafaq(shafaq);
-
-  // getting city and state
   String? city = await get("string", "city");
   String? country = await get("string", "country");
-  // school of thought
   String? SchoolOfThought = await get("string", "SchoolOfThought");
   String? convertedschool = convertschool(SchoolOfThought);
 
-  // getting new date
   var now = DateTime.now();
   var formatter = DateFormat('dd-MM-yyyy');
   String formattedDate = formatter.format(now);
 
-// basic api url
-  // String? url = "http://api.aladhan.com/v1/timings/$formattedDate?";
-  String? url = "http://api.aladhan.com/v1/timings";
-
+  String url = "http://api.aladhan.com/v1/timings";
   if (latitude != null && longitude != null) {
     url = "$url/$formattedDate?latitude=$latitude&longitude=$longitude";
   } else {
     url = "${url}ByCity/$formattedDate?city=$city&country=$country";
   }
-
-  if (calculationmethod != null) {
+  print(convertedcalculationmethod);
+  if (convertedcalculationmethod != null) {
     url = "$url&method=$convertedcalculationmethod";
   }
-  if (shafaq != null) {
+  if (convertedshafaq != null) {
     url = "$url&shafaq=$convertedshafaq";
   }
-  if (SchoolOfThought != null) {
+  if (convertedschool != null) {
     url = "$url&school=$convertedschool";
   }
   store("string", "apiurl", url);
@@ -308,6 +299,15 @@ Future<NamazTimings> fetchNamazTimings() async {
     return NamazTimings.fromJson(jsonResponse['data']['timings']);
   } else {
     throw Exception('Failed to load Namaz timings');
+  }
+}
+
+Future<bool> checkapiurl() async {
+  String? apiurl = await get("string", "apiurl");
+  if (apiurl == null) {
+    return false;
+  } else {
+    return true;
   }
 }
 

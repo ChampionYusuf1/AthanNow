@@ -2,6 +2,7 @@ import 'package:athannow/pages/athantimings.dart';
 import 'package:flutter/material.dart';
 import 'package:athannow/commonfunctions/functins.dart';
 import 'package:athannow/storage/storing.dart';
+//import 'package:athannow/pages/intialpage.dart';
 
 class InitialPage extends StatefulWidget {
   const InitialPage({super.key});
@@ -61,6 +62,7 @@ class _InitialPageState extends State<InitialPage> {
     });
   }
 
+// NEED TO ADD SETTINGS PAGE IS LATITUDE LONGITUDE IS ENABLES BUT WANT TO USE A CERTAIN CITY OR ADDRESS
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +73,7 @@ class _InitialPageState extends State<InitialPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(
-              height: 20,
+              height: 40,
             ),
             const Text(
               'School of thought (required)',

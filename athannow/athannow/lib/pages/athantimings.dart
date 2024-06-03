@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:athannow/commonfunctions/functins.dart';
+import 'package:athannow/pages/intialpage.dart';
 
 class AthanTimingsPage extends StatefulWidget {
   @override
@@ -57,6 +58,62 @@ class _AthanTimingsPageState extends State<AthanTimingsPage> {
                       _buildTableRow('Asr', namazTimings.asr!),
                       _buildTableRow('Maghrib', namazTimings.maghrib!),
                       _buildTableRow('Isha', namazTimings.isha!),
+                    ],
+                  ),
+                  const SizedBox(
+                      height: 20), // Add some spacing before the buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          // Qibla Direction button does nothing for now
+                        },
+                        child: Text('Qibla'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigate to InitialPage
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => InitialPage()),
+                          );
+                        },
+                        child: Text('Settings'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Show a dialog with a Hadith message
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                // title inside of dialouge
+                                title: Text('Hadith Of The Day!'),
+
+                                content: const SingleChildScrollView(
+                                  child: Text(
+                                    'Hadith',
+                                    //actual hadith must go in here
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    // return back to home
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        // title
+                        child: Text('Hadith'),
+                      ),
                     ],
                   ),
                 ],
