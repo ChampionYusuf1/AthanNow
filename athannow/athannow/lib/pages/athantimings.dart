@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:athannow/commonfunctions/functins.dart';
 import 'package:athannow/pages/intialpage.dart';
 import 'package:athannow/commonfunctions/hadith_dialog.dart'; // Import the Hadith dialog
+import 'package:athannow/pages/qiblapage.dart';
 
 class AthanTimingsPage extends StatefulWidget {
   @override
@@ -68,6 +69,11 @@ class _AthanTimingsPageState extends State<AthanTimingsPage> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Qiblapage()),
+                          );
                           // Qibla Direction button does nothing for now
                         },
                         child: Text('Qibla'),

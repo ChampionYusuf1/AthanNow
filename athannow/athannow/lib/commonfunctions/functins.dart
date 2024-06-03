@@ -4,12 +4,14 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geolocator/geolocator.dart' as geo;
 import 'package:athannow/storage/storing.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
+import 'package:sensors/sensors.dart';
 
 // this widget is the intial location permission widget
 Future<void> requestLocationPermissionAndLogCoordinates(
@@ -386,4 +388,45 @@ Future<Hadiths> fetchHadith() async {
   } else {
     throw Exception('Failed to load Hadith');
   }
+}
+
+// sensors
+
+void accelerometer() {
+  accelerometerEvents.listen((AccelerometerEvent event) {
+    print("Accelerometer");
+    print(event);
+  });
+// [AccelerometerEvent (x: 0.0, y: 9.8, z: 0.0)]
+}
+
+void useraccelerometer() {
+  userAccelerometerEvents.listen((UserAccelerometerEvent event) {
+    print("User accelerometer");
+    print(event);
+  });
+}
+
+void gyroscope() {
+  gyroscopeEvents.listen((GyroscopeEvent event) {
+    print("gyroscope");
+    print(event);
+  });
+}
+
+// magtomiter
+void qibladirection(BuildContext context) {
+  accelerometer();
+  useraccelerometer();
+  gyroscope();
+}
+
+Future<double?> getCompassHeading() async {
+  double? heading;
+  FlutterCompass.events!.listen((event) {
+    heading = event.heading;
+  });
+  // Wait for the initial heading value to be set
+  await Future.delayed(const Duration(seconds: 1));
+  return heading;
 }

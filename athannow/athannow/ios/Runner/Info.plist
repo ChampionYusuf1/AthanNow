@@ -6,6 +6,10 @@
 	<string>Your app wants to access your location to provide better services.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Your app wants to access your location in the background to provide better services.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string> Your App wants to use the compass to calculate Qibla</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string> Your App wants to use the compass to calculate Qibla</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
