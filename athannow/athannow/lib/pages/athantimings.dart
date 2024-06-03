@@ -9,11 +9,13 @@ class AthanTimingsPage extends StatefulWidget {
 
 class _AthanTimingsPageState extends State<AthanTimingsPage> {
   late Future<NamazTimings> futureNamazTimings;
+  late Future<Hadiths> futureHadith;
 
   @override
   void initState() {
     super.initState();
     futureNamazTimings = fetchNamazTimings();
+    futureHadith = fetchHadith();
   }
 
   @override
@@ -23,7 +25,6 @@ class _AthanTimingsPageState extends State<AthanTimingsPage> {
         title: Text('AthanNow'),
       ),
       body: Padding(
-        //  padding: const EdgeInsets.all(10.0),
         padding: const EdgeInsetsDirectional.fromSTEB(20, 1, 20, 1),
         child: FutureBuilder<NamazTimings>(
           future: futureNamazTimings,
@@ -60,8 +61,7 @@ class _AthanTimingsPageState extends State<AthanTimingsPage> {
                       _buildTableRow('Isha', namazTimings.isha!),
                     ],
                   ),
-                  const SizedBox(
-                      height: 20), // Add some spacing before the buttons
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -88,30 +88,99 @@ class _AthanTimingsPageState extends State<AthanTimingsPage> {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return AlertDialog(
-                                // title inside of dialouge
-                                title: Text('Hadith Of The Day!'),
+                              return FutureBuilder<Hadiths>(
+                                future: futureHadith,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return AlertDialog(
+                                      title: Text('Hadith Of The Day!'),
+                                      content: Center(
+                                          child: CircularProgressIndicator()),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return AlertDialog(
+                                      title: Text('Hadith Of The Day!'),
+                                      content: Text('Error: ${snapshot.error}'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  } else if (!snapshot.hasData) {
+                                    return AlertDialog(
+                                      title: Text('Hadith Of The Day!'),
+                                      content: Text('No data found'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    final hadith = snapshot.data!;
+                                    final title =
+                                        hadith.headingEnglish?.isNotEmpty ==
+                                                true
+                                            ? hadith.headingEnglish!
+                                            : 'Hadith Of The Day!';
 
-                                content: const SingleChildScrollView(
-                                  child: Text(
-                                    'Hadith',
-                                    //actual hadith must go in here
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    // return back to home
-                                    child: Text('OK'),
-                                  ),
-                                ],
+                                    return AlertDialog(
+                                      title: Text(title),
+                                      content: SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              hadith.hadithEnglish!,
+                                            ),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              'Arabic:',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(hadith.hadithArabic!),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              'Narrator: ${hadith.englishNarrator}',
+                                              style: TextStyle(
+                                                  fontStyle: FontStyle.italic),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                },
                               );
                             },
                           );
                         },
-                        // title
                         child: Text('Hadith'),
                       ),
                     ],

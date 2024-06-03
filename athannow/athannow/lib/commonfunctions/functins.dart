@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart' as geo;
 import 'package:athannow/storage/storing.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'dart:math';
 
 // this widget is the intial location permission widget
 Future<void> requestLocationPermissionAndLogCoordinates(
@@ -249,6 +250,31 @@ String? convertschool(String? school) {
   }
 }
 
+class Hadiths {
+  final String? hadithNumber;
+  final String? englishNarrator;
+  final String? hadithEnglish;
+  final String? hadithArabic;
+  final String? headingEnglish;
+
+  Hadiths({
+    required this.hadithNumber,
+    required this.englishNarrator,
+    required this.hadithEnglish,
+    required this.hadithArabic,
+    required this.headingEnglish,
+  });
+  factory Hadiths.fromJson(Map<String, dynamic> json) {
+    return Hadiths(
+      hadithNumber: json['hadithNumber'],
+      englishNarrator: json['englishNarrator'],
+      hadithEnglish: json['hadithEnglish'],
+      hadithArabic: json['hadithArabic'],
+      headingEnglish: json['headingEnglish'],
+    );
+  }
+}
+
 class NamazTimings {
   final String? fajr;
   final String? dhuhr;
@@ -311,5 +337,51 @@ Future<bool> checkapiurl() async {
   }
 }
 
+// hadith of the day $2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS
+//  https://www.hadithapi.com/public/api/hadiths?apiKey=$2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS
 
-//athan timings with city and country
+Future<int> fetchTotalHadithsPages() async {
+  final response = await http.get(
+    Uri.parse(
+        r'https://hadithapi.com/public/api/hadiths?apiKey=$2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS&paginate=1'),
+  );
+
+  if (response.statusCode == 200) {
+    final jsonResponse = jsonDecode(response.body);
+    if (jsonResponse['hadiths'] == null) {
+      throw Exception('Invalid JSON structure');
+    }
+    return jsonResponse['hadiths']['last_page'];
+  } else {
+    throw Exception('Failed to fetch total pages');
+  }
+}
+
+Future<Hadiths> fetchHadith() async {
+  Random random = Random();
+  int totalPages = await fetchTotalHadithsPages();
+  int randomPage = random.nextInt(totalPages) + 1;
+
+  final response = await http.get(
+    Uri.parse(
+        r'https://hadithapi.com/public/api/hadiths?apiKey=$2y$10$dG7b7sNNJF8UXpUFTePYLeUW8agRqHYytjwwRnDFAwozFgzyPjCYS&page=$randomPage'),
+  );
+
+  if (response.statusCode == 200) {
+    final jsonResponse = jsonDecode(response.body);
+    if (jsonResponse['hadiths']['data'] == null) {
+      throw Exception('Invalid JSON structure');
+    }
+
+    final List<dynamic> hadithsList = jsonResponse['hadiths']['data'];
+    if (hadithsList.isEmpty) {
+      throw Exception('No hadiths found');
+    }
+
+    int randomHadithIndex = random.nextInt(hadithsList.length);
+    final randomHadithJson = hadithsList[randomHadithIndex];
+    return Hadiths.fromJson(randomHadithJson);
+  } else {
+    throw Exception('Failed to load Hadith');
+  }
+}
