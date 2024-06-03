@@ -3,10 +3,14 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'package:athannow/commonfunctions/functins.dart'; // Ensure this function is in the correct path
 
 class Qiblapage extends StatefulWidget {
+  const Qiblapage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _QiblapageState createState() => _QiblapageState();
 }
 
+// ask for user location on this page.
 class _QiblapageState extends State<Qiblapage> {
   double? _heading;
   Color example = Colors.black;
