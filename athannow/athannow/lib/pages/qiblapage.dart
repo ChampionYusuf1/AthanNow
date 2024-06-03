@@ -8,6 +8,7 @@ class Qiblapage extends StatefulWidget {
 
 class _QiblapageState extends State<Qiblapage> {
   double? _heading;
+  Color example = Colors.black;
 
   @override
   void initState() {
@@ -19,6 +20,12 @@ class _QiblapageState extends State<Qiblapage> {
     FlutterCompass.events!.listen((event) {
       setState(() {
         _heading = event.heading;
+        int? test = _heading?.toInt();
+        if (test != null && test != 1) {
+          example = Colors.green;
+        } else {
+          example = Colors.black; // Set to a different color for test == 1
+        }
       });
     });
   }
@@ -32,7 +39,14 @@ class _QiblapageState extends State<Qiblapage> {
       body: Center(
         child: _heading == null
             ? CircularProgressIndicator()
-            : Text('Heading: ${_heading!.toStringAsFixed(2)}°'),
+            : Text(
+                'Heading: ${_heading!.toStringAsFixed(2)}°',
+                style: TextStyle(
+                  color: example,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
       ),
     );
   }
