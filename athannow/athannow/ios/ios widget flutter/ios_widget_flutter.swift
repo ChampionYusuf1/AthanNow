@@ -1,84 +1,66 @@
-//
-//  ios_widget_flutter.swift
-//  ios widget flutter
-//
-//  Created by Yusuf Ghani on 6/3/24.
-//
-
 import WidgetKit
 import SwiftUI
 
-struct Provider: AppIntentTimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
-    }
-
-    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration)
-    }
-    
-    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
-            entries.append(entry)
-        }
-
-        return Timeline(entries: entries, policy: .atEnd)
-    }
-}
-
-struct SimpleEntry: TimelineEntry {
+struct PrayerTimesEntry: TimelineEntry {
     let date: Date
-    let configuration: ConfigurationAppIntent
+    let prayerTimings: [String: String]
 }
 
-struct ios_widget_flutterEntryView : View {
+struct Provider: TimelineProvider {
+    func placeholder(in context: Context) -> PrayerTimesEntry {
+        PrayerTimesEntry(date: Date(), prayerTimings: ["fajr": "", "dhuhr": "", "asr": "", "maghrib": "", "isha": ""])
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (PrayerTimesEntry) -> ()) {
+        let entry = PrayerTimesEntry(date: Date(), prayerTimings: fetchPrayerTimings())
+        completion(entry)
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+        var entries: [PrayerTimesEntry] = []
+        let currentDate = Date()
+        let entry = PrayerTimesEntry(date: currentDate, prayerTimings: fetchPrayerTimings())
+        entries.append(entry)
+        let timeline = Timeline(entries: entries, policy: .atEnd)
+        completion(timeline)
+    }
+
+    func fetchPrayerTimings() -> [String: String] {
+        let userDefaults = UserDefaults(suiteName: "group.com.yourcompany.prayertimings")
+        return [
+            "fajr": userDefaults?.string(forKey: "fajr") ?? "",
+            "dhuhr": userDefaults?.string(forKey: "dhuhr") ?? "",
+            "asr": userDefaults?.string(forKey: "asr") ?? "",
+            "maghrib": userDefaults?.string(forKey: "maghrib") ?? "",
+            "isha": userDefaults?.string(forKey: "isha") ?? "",
+        ]
+    }
+}
+
+struct PrayerTimesWidgetEntryView : View {
     var entry: Provider.Entry
 
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
-
-            Text("Favorite Emoji:")
-            Text(entry.configuration.favoriteEmoji)
+        VStack(alignment: .leading) {
+            Text("Prayer Times")
+                .font(.headline)
+            ForEach(entry.prayerTimings.keys.sorted(), id: \.self) { key in
+                Text("\(key.capitalized): \(entry.prayerTimings[key]!)")
+            }
         }
+        .padding()
     }
 }
 
-struct ios_widget_flutter: Widget {
-    let kind: String = "ios_widget_flutter"
+@main
+struct PrayerTimesWidget: Widget {
+    let kind: String = "PrayerTimesWidget"
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
-            ios_widget_flutterEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            PrayerTimesWidgetEntryView(entry: entry)
         }
+        .configurationDisplayName("Prayer Times")
+        .description("Displays the prayer times.")
     }
-}
-
-extension ConfigurationAppIntent {
-    fileprivate static var smiley: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "😀"
-        return intent
-    }
-    
-    fileprivate static var starEyes: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "🤩"
-        return intent
-    }
-}
-
-#Preview(as: .systemSmall) {
-    ios_widget_flutter()
-} timeline: {
-    SimpleEntry(date: .now, configuration: .smiley)
-    SimpleEntry(date: .now, configuration: .starEyes)
 }
