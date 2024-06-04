@@ -17,8 +17,10 @@ class _QiblapageState extends State<Qiblapage> {
   @override
   void initState() {
     super.initState();
-    _fetchQiblaDirection();
-    _startCompass();
+    requestLocationPermissionAndLogCoordinates(context).then((_) {
+      _fetchQiblaDirection();
+      _startCompass();
+    });
   }
 
   void _startCompass() {
@@ -71,7 +73,7 @@ class _QiblapageState extends State<Qiblapage> {
         title: const Text('Compass Example'),
       ),
       body: AnimatedContainer(
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 200),
         color: backgroundColor,
         child: Center(
           child: _heading == null || qibladirection == null

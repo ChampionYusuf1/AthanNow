@@ -463,6 +463,11 @@ Future<Qibladirection> fetchQiblaDirection() async {
   }
 }
 
+Future<bool> fetchData() async {
+  double? test = await get("double", "latitude");
+  return test != null;
+}
+
 void removealldata() async {
   remove("latitude");
   remove("longitude");

@@ -54,11 +54,6 @@ class _InitialPageState extends State<InitialPage> {
   final citytext = TextEditingController();
   final countrytext = TextEditingController();
 
-  Future<bool> fetchData() async {
-    double? test = await get("double", "latitude");
-    return test != null;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -203,6 +198,7 @@ class _InitialPageState extends State<InitialPage> {
             const SizedBox(
               height: 15,
             ),
+            // need to add button here to re-generaate latitude longitude
             FutureBuilder<bool>(
               future: fetchData(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
