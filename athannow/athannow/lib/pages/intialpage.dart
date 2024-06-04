@@ -10,15 +10,21 @@ class InitialPage extends StatefulWidget {
   @override
   _InitialPageState createState() => _InitialPageState();
 }
+//latitudeAdjustmentMethod
 
 class _InitialPageState extends State<InitialPage> {
   String? selectedSchoolOfThought;
   String? selectedCalculationMethod;
   String? selectedShafaq;
-
+  String? latitudeAdjustmentMethod;
   final List<String> schoolOfThoughtOptions = [
     'Hanafi',
     'Shafawi',
+  ];
+  final List<String> selectedlatitudeadjustmentmethod = [
+    'Middle of the Night',
+    'One Seventh',
+    'Angle Based',
   ];
   final List<String> selectedCalculationMethodOptions = [
     'Closest to your location',
@@ -77,7 +83,7 @@ class _InitialPageState extends State<InitialPage> {
               height: 40,
             ),
             const Text(
-              'School of thought (required)',
+              'School(required)',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             // DROPDOWN
@@ -89,7 +95,7 @@ class _InitialPageState extends State<InitialPage> {
               ),
               child: DropdownButton<String>(
                 isExpanded: true,
-                hint: const Text('Select School of Thought'),
+                hint: const Text('Hanafi or Shafawi'),
                 value: selectedSchoolOfThought,
                 onChanged: (String? newValue) {
                   setState(() {
@@ -108,7 +114,7 @@ class _InitialPageState extends State<InitialPage> {
               height: 15,
             ),
             const Text(
-              'Calculation Method (optional)',
+              'Calculation Method(optional)',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Container(
@@ -138,7 +144,7 @@ class _InitialPageState extends State<InitialPage> {
               height: 15,
             ),
             const Text(
-              'Shafaq (optional)',
+              'Shafaq(optional)',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Container(
@@ -157,6 +163,36 @@ class _InitialPageState extends State<InitialPage> {
                   });
                 },
                 items: shafaqOptions.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            const Text(
+              'Latitude Adjustment(optional)',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: DropdownButton<String>(
+                isExpanded: true,
+                hint: const Text('Select Adjustment'),
+                value: latitudeAdjustmentMethod,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    latitudeAdjustmentMethod = newValue!;
+                  });
+                },
+                items: selectedlatitudeadjustmentmethod.map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -239,6 +275,10 @@ class _InitialPageState extends State<InitialPage> {
                 if (selectedShafaq != null) {
                   store("string", "Shafaq", selectedShafaq!);
                 }
+                if (latitudeAdjustmentMethod != null) {
+                  store("string", "latitudeAdjustmentMethod",
+                      latitudeAdjustmentMethod!);
+                }
 
                 if (!await fetchData()) {
                   store("string", "city", citytext.text);
@@ -247,6 +287,8 @@ class _InitialPageState extends State<InitialPage> {
                   store("string", "CalculationMethod",
                       selectedCalculationMethod!);
                   store("string", "Shafaq", selectedShafaq!);
+                  store("string", "latitudeAdjustmentMethod",
+                      latitudeAdjustmentMethod!);
                 }
                 // NEED TO FIGURE OUT HOW TO MAKE THIS NULL
 

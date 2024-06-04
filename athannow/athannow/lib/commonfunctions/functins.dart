@@ -135,7 +135,7 @@ Future<bool> isDataAlreadyHere() async {
 bool testingwidget(bool test) {
   Widget myWidget = Container(
     color: Colors.blue,
-    child: Text(
+    child: const Text(
       'Testing Widget',
       style: TextStyle(
         color: Colors.white,
@@ -166,6 +166,9 @@ Future<void> calculateprayertimings() async {
   String? country = await get("string", "country");
   String? SchoolOfThought = await get("string", "SchoolOfThought");
   String? convertedschool = convertschool(SchoolOfThought);
+  String? latadjustment = await get("string", "latitudeAdjustmentMethod");
+  String? convertedlatitudeadjustmentmethod =
+      convertLatitudeadjustment(latadjustment);
 
   var now = DateTime.now();
   var formatter = DateFormat('dd-MM-yyyy');
@@ -177,7 +180,6 @@ Future<void> calculateprayertimings() async {
   } else {
     url = "${url}ByCity/$formattedDate?city=$city&country=$country";
   }
-  print(convertedcalculationmethod);
   if (convertedcalculationmethod != null) {
     url = "$url&method=$convertedcalculationmethod";
   }
@@ -187,8 +189,23 @@ Future<void> calculateprayertimings() async {
   if (convertedschool != null) {
     url = "$url&school=$convertedschool";
   }
+  if (convertedlatitudeadjustmentmethod != null) {
+    url = "$url&latitudeAdjustmentMethod=$convertedlatitudeadjustmentmethod";
+  }
   store("string", "apiurl", url);
   print(url);
+}
+
+String? convertLatitudeadjustment(String? adj) {
+  if (adj == "Middle of the Night") {
+    return "1";
+  } else if (adj == "One Seventh") {
+    return "2";
+  } else if (adj == "Angle Based") {
+    return "3";
+  } else {
+    return null;
+  }
 }
 
 String? convertcalculation(String? calc) {
@@ -384,13 +401,12 @@ Future<Hadiths> fetchHadith() async {
 }
 
 // sensors
-
+/*
 void accelerometer() {
   accelerometerEvents.listen((AccelerometerEvent event) {
     print("Accelerometer");
     print(event);
   });
-// [AccelerometerEvent (x: 0.0, y: 9.8, z: 0.0)]
 }
 
 void useraccelerometer() {
@@ -413,6 +429,7 @@ void qibladirection(BuildContext context) {
   useraccelerometer();
   gyroscope();
 }
+*/
 
 Future<double?> getCompassHeading() async {
   double? heading;
@@ -455,4 +472,5 @@ void removealldata() async {
   remove("Shafaq");
   remove("city");
   remove("country");
+  remove("latitudeAdjustmentMethod");
 }
