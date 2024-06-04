@@ -22,6 +22,7 @@ class _AthanTimingsPageState extends State<AthanTimingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    checkstoreprayeritmings();
     return Scaffold(
       appBar: AppBar(
         title: Text('AthanNow'),

@@ -353,11 +353,26 @@ Future<NamazTimings> fetchNamazTimings() async {
         jsonResponse['data']['timings'] == null) {
       throw Exception('Invalid JSON structure');
     }
-
+    NamazTimings timings =
+        NamazTimings.fromJson(jsonResponse['data']['timings']);
+    await storePrayerTimings(timings);
     return NamazTimings.fromJson(jsonResponse['data']['timings']);
   } else {
     throw Exception('Failed to load Namaz timings');
   }
+}
+
+void checkstoreprayeritmings() async {
+  String? fajr = await get("string", "fajr");
+  print(fajr);
+}
+
+Future<void> storePrayerTimings(NamazTimings timings) async {
+  store("string", "fajr", timings.fajr!);
+  store("string", "dhuhr", timings.dhuhr!);
+  store("string", "asr", timings.asr!);
+  store("string", "maghrib", timings.maghrib!);
+  store("string", "isha", timings.isha!);
 }
 
 Future<bool> checkapiurl() async {
