@@ -6,15 +6,13 @@ class Qiblapage extends StatefulWidget {
   const Qiblapage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _QiblapageState createState() => _QiblapageState();
 }
 
-// ask for user location on this page.
 class _QiblapageState extends State<Qiblapage> {
   double? _heading;
-  Color example = Colors.black;
   int? qibladirection;
+  Color backgroundColor = Colors.white;
 
   @override
   void initState() {
@@ -28,20 +26,7 @@ class _QiblapageState extends State<Qiblapage> {
       if (mounted) {
         setState(() {
           _heading = event.heading;
-          int? test = _heading?.toInt();
-          if (test != null && qibladirection != null) {
-            if (test == qibladirection ||
-                test == qibladirection! + 1 ||
-                test == qibladirection! - 1 ||
-                test == qibladirection! + 2 ||
-                test == qibladirection! - 2) {
-              example = Colors.green;
-            } else {
-              example = Colors.black;
-            }
-          } else {
-            example = Colors.black;
-          }
+          _updateBackgroundColor();
         });
       }
     });
@@ -53,6 +38,7 @@ class _QiblapageState extends State<Qiblapage> {
       if (mounted) {
         setState(() {
           qibladirection = qiblaDirection.direction?.toInt();
+          _updateBackgroundColor();
         });
       }
     } catch (e) {
@@ -64,23 +50,54 @@ class _QiblapageState extends State<Qiblapage> {
     }
   }
 
+  void _updateBackgroundColor() {
+    if (_heading != null && qibladirection != null) {
+      int? test = _heading?.toInt();
+      if (test != null &&
+          (test >= qibladirection! - 4 && test <= qibladirection! + 4)) {
+        backgroundColor = Colors.green;
+      } else {
+        backgroundColor = Colors.white;
+      }
+    } else {
+      backgroundColor = Colors.white;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Compass Example'),
+        title: const Text('Compass Example'),
       ),
-      body: Center(
-        child: _heading == null
-            ? CircularProgressIndicator()
-            : Text(
-                'Heading: ${_heading!.toStringAsFixed(2)}°',
-                style: TextStyle(
-                  color: example,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 500),
+        color: backgroundColor,
+        child: Center(
+          child: _heading == null || qibladirection == null
+              ? const CircularProgressIndicator()
+              : Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Kaaba image
+                    Image.asset(
+                      'assets/kaaba.png',
+                      height: 50,
+                      width: 50,
+                    ),
+                    // Rotating arrow
+                    Transform.rotate(
+                      angle: ((_heading! - qibladirection!) *
+                          (3.141592653589793 / 180)),
+                      child: Image.asset(
+                        'assets/arrow.png',
+                        height: 100,
+                        width: 100,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+        ),
       ),
     );
   }
