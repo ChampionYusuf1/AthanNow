@@ -88,6 +88,7 @@ class _QiblapageState extends State<Qiblapage> {
                       width: 50,
                     ),
                     // Rotating arrow
+
                     Transform.rotate(
                       angle: ((_heading! - qibladirection!) *
                           (3.141592653589793 / 180)),
