@@ -64,11 +64,16 @@ Future<void> showHadithDialog(
                       hadith.hadithEnglish!,
                     ),
                     SizedBox(height: 10),
-                    Text(
+                    const Text(
                       'Arabic:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    Text(hadith.hadithArabic!),
+                    Text(hadith.hadithArabic!,
+                        style: TextStyle(
+                          fontSize: 28,
+                        )),
                     SizedBox(height: 10),
                     Text(
                       'Narrator: ${hadith.englishNarrator}',
