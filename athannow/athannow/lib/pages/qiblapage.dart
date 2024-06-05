@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:athannow/commonfunctions/functins.dart'; // Ensure this function is in the correct path
+import 'package:athannow/pages/athantimings.dart';
+import 'package:athannow/pages/intialpage.dart';
 
 class Qiblapage extends StatefulWidget {
   const Qiblapage({super.key});
@@ -13,6 +15,7 @@ class _QiblapageState extends State<Qiblapage> {
   double? _heading;
   int? qibladirection;
   Color backgroundColor = Colors.white;
+  int _selectedIndex = 0; // Set the initial index for this page
 
   @override
   void initState() {
@@ -66,6 +69,31 @@ class _QiblapageState extends State<Qiblapage> {
     }
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    if (index == 0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AthanTimingsPage()),
+      );
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => InitialPage()),
+      );
+    }
+    /*
+    else if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Qiblapage()),
+      );
+    }
+    */
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +116,6 @@ class _QiblapageState extends State<Qiblapage> {
                       width: 50,
                     ),
                     // Rotating arrow
-
                     Transform.rotate(
                       angle: ((_heading! - qibladirection!) *
                           (3.141592653589793 / 180)),
@@ -101,6 +128,27 @@ class _QiblapageState extends State<Qiblapage> {
                   ],
                 ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.access_time),
+            label: 'Timings',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+          /*
+          BottomNavigationBarItem(
+            icon: Icon(Icons.explore),
+            label: 'Qibla',
+          ),
+          */
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
       ),
     );
   }

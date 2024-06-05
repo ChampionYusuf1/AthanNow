@@ -34,11 +34,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/greenphonelogo.png
-    - assets/images/homeimage.png
-    - assets/images/moonwmasjidlogo.png
-    - assets/images/settingsimage.png
-    - assets/images/yellowmasjidlogo.png
+  
     - assets/kaaba.png
     - assets/arrow.png
     - assets/compass.png
+    - assets/moonwmasjidlogo.png

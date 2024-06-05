@@ -2,7 +2,6 @@ import 'package:athannow/pages/athantimings.dart';
 import 'package:flutter/material.dart';
 import 'package:athannow/commonfunctions/functins.dart';
 import 'package:athannow/storage/storing.dart';
-//import 'package:athannow/pages/intialpage.dart';
 
 class InitialPage extends StatefulWidget {
   const InitialPage({super.key});
@@ -10,7 +9,6 @@ class InitialPage extends StatefulWidget {
   @override
   _InitialPageState createState() => _InitialPageState();
 }
-//latitudeAdjustmentMethod
 
 class _InitialPageState extends State<InitialPage> {
   String? selectedSchoolOfThought;
@@ -53,6 +51,7 @@ class _InitialPageState extends State<InitialPage> {
 
   final citytext = TextEditingController();
   final countrytext = TextEditingController();
+  int _selectedIndex = 1; // Set the initial index to this page
 
   @override
   void initState() {
@@ -63,245 +62,290 @@ class _InitialPageState extends State<InitialPage> {
     });
   }
 
-// NEED TO ADD SETTINGS PAGE IS LATITUDE LONGITUDE IS ENABLES BUT WANT TO USE A CERTAIN CITY OR ADDRESS
-// update location
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    if (index == 0) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AthanTimingsPage()),
+      );
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => InitialPage()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 40,
-            ),
-            const Text(
-              'School(required)',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            // DROPDOWN
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                hint: const Text('Hanafi or Shafawi'),
-                value: selectedSchoolOfThought,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedSchoolOfThought = newValue!;
-                  });
-                },
-                items: schoolOfThoughtOptions.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            const Text(
-              'Calculation Method(optional)',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                hint: const Text('Select Calculation Method'),
-                value: selectedCalculationMethod,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedCalculationMethod = newValue!;
-                  });
-                },
-                items: selectedCalculationMethodOptions.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            const Text(
-              'Shafaq(optional)',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                hint: const Text('Select Shafaq'),
-                value: selectedShafaq,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedShafaq = newValue!;
-                  });
-                },
-                items: shafaqOptions.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            const Text(
-              'Latitude Adjustment(optional)',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                hint: const Text('Select Adjustment'),
-                value: latitudeAdjustmentMethod,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    latitudeAdjustmentMethod = newValue!;
-                  });
-                },
-                items: selectedlatitudeadjustmentmethod.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            // need to add button here to re-generaate latitude longitude
-            FutureBuilder<bool>(
-              future: fetchData(),
-              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator(); // Show loading indicator while waiting for the future
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else if (snapshot.hasData && !snapshot.data!) {
-                  // If location is not stored, show additional text fields
-                  return Column(
-                    children: [
-                      const Text(
-                        'Please Enter the City you live in.',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      TextField(
-                        controller: citytext,
-                        decoration: InputDecoration(
-                          hintText: 'Ex: Chicago',
-                          border: const OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              citytext.clear();
-                            },
-                            icon: const Icon(Icons.clear),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Settings'),
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text(
+                  'School(required)',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                // DROPDOWN
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    hint: const Text('Hanafi or Shafawi'),
+                    value: selectedSchoolOfThought,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedSchoolOfThought = newValue!;
+                      });
+                    },
+                    items: schoolOfThoughtOptions.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                const Text(
+                  'Calculation Method(optional)',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    hint: const Text('Select Calculation Method'),
+                    value: selectedCalculationMethod,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedCalculationMethod = newValue!;
+                      });
+                    },
+                    items: selectedCalculationMethodOptions.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                const Text(
+                  'Shafaq(optional)',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    hint: const Text('Select Shafaq'),
+                    value: selectedShafaq,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedShafaq = newValue!;
+                      });
+                    },
+                    items: shafaqOptions.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                const Text(
+                  'Latitude Adjustment(optional)',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    hint: const Text('Select Adjustment'),
+                    value: latitudeAdjustmentMethod,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        latitudeAdjustmentMethod = newValue!;
+                      });
+                    },
+                    items: selectedlatitudeadjustmentmethod.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                // need to add button here to re-generaate latitude longitude
+                FutureBuilder<bool>(
+                  future: fetchData(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(); // Show loading indicator while waiting for the future
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData && !snapshot.data!) {
+                      // If location is not stored, show additional text fields
+                      return Column(
+                        children: [
+                          const Text(
+                            'Please Enter the City you live in.',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Text(
-                        'Please enter the country you live in',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      TextField(
-                        controller: countrytext,
-                        decoration: InputDecoration(
-                          hintText: 'Ex: United States',
-                          border: const OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              countrytext.clear();
-                            },
-                            icon: const Icon(Icons.clear),
+                          TextField(
+                            controller: citytext,
+                            decoration: InputDecoration(
+                              hintText: 'Ex: Chicago',
+                              border: const OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  citytext.clear();
+                                },
+                                icon: const Icon(Icons.clear),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                    ],
-                  );
-                } else {
-                  return Container(); // Return an empty container if location is stored
-                }
-              },
-            ),
-            MaterialButton(
-              onPressed: () async {
-                if (selectedSchoolOfThought != null) {
-                  store("string", "SchoolOfThought", selectedSchoolOfThought!);
-                }
-                if (selectedCalculationMethod != null) {
-                  store("string", "CalculationMethod",
-                      selectedCalculationMethod!);
-                }
-                if (selectedShafaq != null) {
-                  store("string", "Shafaq", selectedShafaq!);
-                }
-                if (latitudeAdjustmentMethod != null) {
-                  store("string", "latitudeAdjustmentMethod",
-                      latitudeAdjustmentMethod!);
-                }
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            'Please enter the country you live in',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          TextField(
+                            controller: countrytext,
+                            decoration: InputDecoration(
+                              hintText: 'Ex: United States',
+                              border: const OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  countrytext.clear();
+                                },
+                                icon: const Icon(Icons.clear),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Container(); // Return an empty container if location is stored
+                    }
+                  },
+                ),
+                TextButton(
+                  onPressed: () async {
+                    remove("latitude");
+                    remove("longitude");
+                    await requestLocationPermissionAndLogCoordinates(context);
+                  },
+                  child: const Text('Update Location'),
+                ),
+                MaterialButton(
+                  onPressed: () async {
+                    if (selectedSchoolOfThought != null) {
+                      store("string", "SchoolOfThought",
+                          selectedSchoolOfThought!);
+                    }
+                    if (selectedCalculationMethod != null) {
+                      store("string", "CalculationMethod",
+                          selectedCalculationMethod!);
+                    }
+                    if (selectedShafaq != null) {
+                      store("string", "Shafaq", selectedShafaq!);
+                    }
+                    if (latitudeAdjustmentMethod != null) {
+                      store("string", "latitudeAdjustmentMethod",
+                          latitudeAdjustmentMethod!);
+                    }
 
-                if (!await fetchData()) {
-                  store("string", "city", citytext.text);
-                  store("string", "country", countrytext.text);
-                  store("string", "SchoolOfThought", selectedSchoolOfThought!);
-                  store("string", "CalculationMethod",
-                      selectedCalculationMethod!);
-                  store("string", "Shafaq", selectedShafaq!);
-                  store("string", "latitudeAdjustmentMethod",
-                      latitudeAdjustmentMethod!);
-                }
-                // NEED TO FIGURE OUT HOW TO MAKE THIS NULL
+                    if (!await fetchData()) {
+                      store("string", "city", citytext.text);
+                      store("string", "country", countrytext.text);
+                      store("string", "SchoolOfThought",
+                          selectedSchoolOfThought!);
+                      store("string", "CalculationMethod",
+                          selectedCalculationMethod!);
+                      store("string", "Shafaq", selectedShafaq!);
+                      store("string", "latitudeAdjustmentMethod",
+                          latitudeAdjustmentMethod!);
+                    }
+                    // NEED TO FIGURE OUT HOW TO MAKE THIS NULL
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AthanTimingsPage()),
-                );
-                // go to athantimings page
-              },
-              color: const Color(0xFF003238),
-              child: const Text('Calculate Timings',
-                  style: TextStyle(color: Colors.white)),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AthanTimingsPage()),
+                    );
+                    // go to athantimings page
+                  },
+                  color: const Color(0xFF003238),
+                  child: const Text('Calculate Timings',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      //over here need to add the settings page etc etc.
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.access_time),
+                label: 'Timings',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: 'Settings',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: Colors.amber[800],
+            onTap: _onItemTapped,
+          ),
+        );
+      },
     );
   }
 }

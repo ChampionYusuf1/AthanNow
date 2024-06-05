@@ -494,3 +494,14 @@ void removealldata() async {
   remove("country");
   remove("latitudeAdjustmentMethod");
 }
+
+class LogoWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      'assets/moonwmasjidlogo.png',
+      width: 40,
+      height: 40,
+    );
+  }
+}
